@@ -1,4 +1,5 @@
 # OCPP server with ability to send commands by mqtt
+# for home automation projects
 
 import asyncio
 import logging
