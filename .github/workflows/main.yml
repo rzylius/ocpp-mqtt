@@ -1,0 +1,18 @@
+name: Deploy imeon-mqtt
+
+on:
+  push:
+    branches: [ "main" ] 
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: "Perkelimasi i hera"
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
+    - run: python ocpp.py
