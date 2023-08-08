@@ -12,4 +12,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - run: systemctl stop ocpp
+    - run: chown openhab:openhab central_system.py
+    - run: mv /var/lib/openhab/ocpp-server/central_system.py /var/lib/openhab/ocpp-server/central_system.py1
+    - run: mv central_system.py /var/lib/openhab/imeon-mqtt/
+    - run: systemctl start ocpp
     
