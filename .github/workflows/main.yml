@@ -30,7 +30,7 @@ jobs:
       run: mv $DST $DST/$FILE1
     
     - run: cp * $DST
-    - run: chown -R openhab:openhab $DST
+    - run: chown openhab:openhab $DST/*
 
     - run: $DST/venv/bin/activate
     - run: pip install requirements.txt
