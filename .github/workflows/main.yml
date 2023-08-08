@@ -33,7 +33,7 @@ jobs:
     - run: chown openhab:openhab $DST/*
 
     - run: source $DST/venv/bin/activate
-    - run: pip install requirements.txt
+    - run: python3 -m pip install -r requirements.txt
 
     - run: systemctl start $SRV
     
