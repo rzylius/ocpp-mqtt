@@ -27,9 +27,10 @@ jobs:
 
     - name: File exists
       if: steps.check_files.outputs.files_exists == 'true'
-      run: mv $DST$FILE $DST$FILE1
+      run: mv $DST $DST$FILE1
     
-    - run: cp $FILE $DST
-    - run: chown openhab:openhab $DST$FILE
+    - run: cp * $DST
+    - run: chown -R openhab:openhab $DST
+
     - run: systemctl start $SRV
     
