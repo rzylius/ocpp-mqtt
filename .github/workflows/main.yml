@@ -1,4 +1,4 @@
-name: Deploy imeon-mqtt
+name: Deploy OCPP-SERVER
 
 on:
   push:
