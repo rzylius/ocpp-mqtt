@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DST: /var/lib/openhab/ocpp-server/
+  DST: /var/lib/openhab/ocpp-server
   FILE: central_system.py
   SRV: ocpp
 
@@ -23,11 +23,11 @@ jobs:
       id: check_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "$DST$FILE"
+        files: "$DST/$FILE"
 
     - name: File exists
       if: steps.check_files.outputs.files_exists == 'true'
-      run: mv $DST $DST$FILE1
+      run: mv $DST $DST/$FILE1
     
     - run: cp * $DST
     - run: chown -R openhab:openhab $DST
