@@ -32,7 +32,7 @@ jobs:
     - run: cp * $DST
     - run: chown -R openhab:openhab $DST
 
-    - run: $DSTvenv/bin/activate
+    - run: $DST/venv/bin/activate
     - run: pip install requirements.txt
 
     - run: systemctl start $SRV
