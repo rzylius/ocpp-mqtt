@@ -257,7 +257,7 @@ async def mqtt_on_message(msg):
 async def main():
 
     server = await websockets.serve(
-        on_connect, "0.0.0.0", 9000, subprotocols=["ocpp1.6"], ping_timeout = None
+        on_connect, "10.0.20.240", 9003, subprotocols=["ocpp1.6"], ping_timeout = None
     )
     logging.info("Server Started listening to new connections...")
     await server.wait_closed()
