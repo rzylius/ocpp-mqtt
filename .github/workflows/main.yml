@@ -5,6 +5,11 @@ on:
     branches: [ "main" ] 
   workflow_dispatch:
 
+env:
+  DST: /var/lib/openhab/ocpp-server/
+  FILE: central_system.py
+  SRV: ocpp
+
 jobs:
   deploy:
     name: "Perkelimasi i hera"
@@ -12,9 +17,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: systemctl stop ocpp
-    - run: chown openhab:openhab central_system.py
-    - run: mv /var/lib/openhab/ocpp-server/central_system.py /var/lib/openhab/ocpp-server/central_system.py1
-    - run: mv central_system.py /var/lib/openhab/imeon-mqtt/
-    - run: systemctl start ocpp
+    - run: systemctl stop $SRV
+
+    - name: Check file existence
+      id: check_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "$DST$FILE"
+
+    - name: File exists
+      if: steps.check_files.outputs.files_exists == 'true'
+      run: mv $DST$FILE $DST$FILE1
+    
+    - run: cp $FILE $DST
+    - run: chown openhab:openhab $DST$FILE
+    - run: systemctl start $SRV
     
