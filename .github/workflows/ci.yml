@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    name: "Perkelimasi i hera"
+    name: "kopijavimas i hera"
     runs-on: [self-hosted]
 
     steps:
@@ -51,4 +51,4 @@ jobs:
       - name: Install the project dependencies
         run: poetry update
       - name: Run script
-        run: poetry run python central_system.py
+        #run: poetry run python central_system.py
