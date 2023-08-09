@@ -51,4 +51,4 @@ jobs:
       - name: Install the project dependencies
         run: poetry update
       - name: Run script
-        run: poetry python central_system.py
+        run: poetry run python central_system.py
