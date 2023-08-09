@@ -1,0 +1,54 @@
+name: Deploy OCPP-SERVER
+
+on:
+  push:
+    branches: [ "master" ] 
+  workflow_dispatch:
+
+env:
+  DST: /var/lib/openhab/ocpp-server
+  FILE: central_system.py
+  SRV: ocpp
+
+jobs:
+  deploy:
+    name: "Perkelimasi i hera"
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: systemctl stop $SRV
+
+    - name: Check file existence
+      id: check_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "$DST/$FILE"
+
+    - name: File exists
+      if: steps.check_files.outputs.files_exists == 'true'
+      run: mv $DST $DST/$FILE1
+    
+    - run: cp * $DST
+    - run: chown openhab:openhab $DST/*
+
+  ci:
+    runs-on: [self-hosted]
+    steps:
+      - name: CD to ocpp-server
+        run: cd $DST
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+      - name: Setup a local virtual environment (if no poetry.toml file)
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: Install the project dependencies
+        run: poetry install
+      - name: Run the automated tests (for example)
+        run: poetry python central_system.py
