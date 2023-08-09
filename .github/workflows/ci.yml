@@ -1,4 +1,4 @@
-name: Deploy CI OCPP
+name: Deploy OCPP-SERVER
 
 on:
   push:
@@ -49,6 +49,6 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install
-      - name: Run the automated tests (for example)
+        run: poetry update
+      - name: Run script
         run: poetry python central_system.py
