@@ -4,11 +4,11 @@
 import asyncio
 import logging
 from datetime import datetime
-import time, schedule
 from aiomqtt import Client, MqttError
 import json, sys, os, pprint
 from dotenv import load_dotenv
 from pathlib import Path
+import signal
 
 try:
     import websockets
@@ -32,7 +32,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv(verbose=True)
 MQTT_USERNAME=os.getenv('MQTT_USERNAME')
 MQTT_PASSWORD=os.getenv('MQTT_PASSWORD')
-
+LISTEN_ADDR=os.getenv('LISTEN_ADDR')
 
 
 class ChargePoint(cp):
@@ -237,31 +237,32 @@ async def on_connect(websocket, path):
         print("--- websockets connection closed")
     """
 
-# Sample async function to be called
-async def processSnapshot(camera_serial):
-    print("processSnapshot")
-    await asyncio.sleep(1)
+class SignalHandler:
+    shutdown_requested = False
 
-# This gets called whenever when we get an MQTT message
-async def mqtt_on_message(msg):
-    data = json.loads(msg.payload.decode('utf-8'))
-    print("MQTT data" + data)
-    split_topic = msg.topic.split("/", 3)
-    
-    return await processSnapshot(split_topic)
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.request_shutdown)
+        signal.signal(signal.SIGTERM, self.request_shutdown)
 
-                
-                
+    def request_shutdown(self, *args):
+        print('Request to shutdown received, stopping')
+        self.shutdown_requested = True
+
+    def can_run(self):
+        return not self.shutdown_requested
+
 
 
 async def main():
 
     server = await websockets.serve(
-        on_connect, "10.0.20.240", 9003, subprotocols=["ocpp1.6"], ping_timeout = None
+        on_connect, LISTEN_ADDR, 9003, subprotocols=["ocpp1.6"], ping_timeout = None
     )
     logging.info("Server Started listening to new connections...")
     await server.wait_closed()
-   
+
+signal_handler = SignalHandler()   
+
 if sys.platform.lower() == "win32" or os.name.lower() == "nt":
     from asyncio import set_event_loop_policy, WindowsSelectorEventLoopPolicy
     set_event_loop_policy(WindowsSelectorEventLoopPolicy())
@@ -270,16 +271,3 @@ if sys.platform.lower() == "win32" or os.name.lower() == "nt":
 if __name__ == "__main__":
     # asyncio.run() is used when running this example with Python >= 3.7v
     asyncio.run(main())
-
-    """
-    schedule.every(1).minutes.do(start_remote)
-
-    while True:
- 
-        # Checks whether a scheduled task
-        # is pending to run or not
-        schedule.run_pending()
-        time.sleep(1)
-
-    
-"""
