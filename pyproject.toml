@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ocpp-server"
+version = "0.1.0"
+description = "OCPP MQTT bridge for home automation"
+authors = ["rzylius <rzylius@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ocpp_server"}]
+
+[tool.poetry.dependencies]
+python = "3.9.*"
+websockets = "^11.0.3"
+aiomqtt = "^1.1.0"
+python-dotenv = "^1.0.0"
+ocpp = "^0.19.0"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
