@@ -32,8 +32,8 @@ jobs:
     - run: cp * $DST
     - run: chown openhab:openhab $DST/*
 
-    - run: source $DST/venv/bin/activate
-    - run: $DST/venv/bin/python3 -m pip install -r requirements.txt
+    #- run: source $DST/venv/bin/activate
+    #- run: $DST/venv/bin/python3 -m pip install -r requirements.txt
 
-    - run: systemctl start $SRV
+    #- run: systemctl start $SRV
     
