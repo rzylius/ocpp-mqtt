@@ -1,4 +1,4 @@
-name: Deploy OCPP-SERVER
+name: Deploy CI OCPP
 
 on:
   push:
