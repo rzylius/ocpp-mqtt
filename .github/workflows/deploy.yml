@@ -17,14 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Stop service
-      run: systemctl stop $SRV 
-
-    - name: $SRV status
-      id: srv-status
-      run: |
-        echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
 
     - name: Check file existence
       id: check_files
@@ -39,9 +31,24 @@ jobs:
     - run: cp * $DST
     - run: chown openhab:openhab $DST/*
 
+  stop_service:
+    name: "Serviso sustabdymas"
+    needs: copy_code
+    runs-on: [self-hosted]
+    steps:
+    - name: Stop service
+      run: systemctl stop $SRV 
+  
+    - name: $SRV status
+      id: srv-status
+      run: |
+        echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
+    - name: is service inactive
+      run: echo steps.srv-status.outputs.srv-status
+
   prepare_poetry:
     name: "Poetry paleidimas ir venv paruošimas"
-    needs: copy_code
+    needs: stop_service
     runs-on: [self-hosted]
     steps:
     - name: CD to ocpp-server
@@ -61,7 +68,7 @@ jobs:
       run: poetry update
 
   start_service:
-    name: "$SRV serviso paleidimas"
+    name: $SRV " serviso paleidimas"
     needs: prepare_poetry
     runs-on: [self-hosted]
     steps:
