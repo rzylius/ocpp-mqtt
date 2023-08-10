@@ -17,6 +17,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Stop service
     - run: systemctl stop $SRV 
 
     - name: $SRV status
