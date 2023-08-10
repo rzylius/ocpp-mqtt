@@ -44,7 +44,7 @@ jobs:
       run: |
         echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
     - name: is service inactive
-      if: steps.srv-status.outputs.srv-status== "active"
+      if: ${{steps.srv-status.outputs.srv-status}} == "active"
       run: exit 1
 
   prepare_poetry:
