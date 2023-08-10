@@ -24,7 +24,7 @@ jobs:
     - name: $SRV status
       id: srv-status
       run: |
-        echo "systemctl is-active $SRV" >> $GITHUB_OUTPUT
+        echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
 
     - name: Check file existence
       id: check_files
