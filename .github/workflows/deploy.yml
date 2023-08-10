@@ -17,7 +17,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: systemctl stop $SRV
+    - run: systemctl stop $SRV 
+
+    - name: $SRV status
+    - id: srv-status
+    - run: echo "systemctl is-active $SRV" >> "$GITHUB_OUTPUT"
 
     - name: Check file existence
       id: check_files
@@ -47,5 +51,5 @@ jobs:
         key: venv-${{ hashFiles('poetry.lock') }}
     - name: Install the project dependencies
       run: poetry update
-    #- name: Run script
-      #run: poetry run python central_system.py
+    - name: Start $SRV service
+      run: systemctl start $SRV
