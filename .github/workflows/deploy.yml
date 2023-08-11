@@ -44,10 +44,14 @@ jobs:
       run: |
         echo "srv_status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
     
-    - run: systemctl is-active $SRV
-    - run: echo "${{steps.srv_status.outputs.srv_status}}"
-    - run: echo ${{steps.srv_status.outputs.srv_status}}
-    - run: ${{steps.srv_status.outputs.srv_status}}
+    - name: Parodyti statusa
+      run: systemctl is-active $SRV
+    - name: Parodyti statusa2
+      run: echo "${{steps.srv_status.outputs.srv_status}}"
+    - name: Parodyti statusa3
+      run: echo ${{steps.srv_status.outputs.srv_status}}
+    - name: Parodyti statusa4
+      run: ${{steps.srv_status.outputs.srv_status}}
 
                 
     - name: is service inactive
