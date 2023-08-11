@@ -53,9 +53,6 @@ jobs:
       run: ${{steps.srv_status.outputs.srv_status}}
 
                 
-    - name: is service inactive
-      if: steps.srv_status.outputs.srv_status == 'active'
-      run: exit 1
 
   prepare_poetry:
     name: "Poetry paleidimas ir venv paruošimas"
