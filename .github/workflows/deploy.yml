@@ -48,9 +48,10 @@ jobs:
       run: echo "${{steps.srv_status.outputs.srv_status}}"
     - name: Parodyti statusa3
       run: echo ${{steps.srv_status.outputs.srv_status}}
-    - name: Parodyti statusa4
-      run: ${{steps.srv_status.outputs.srv_status}}
 
+    - name: is SRV active
+      if: steps.srv_status.outputs.srv_status=='active'
+      run: exit 1
                 
 
   prepare_poetry:
