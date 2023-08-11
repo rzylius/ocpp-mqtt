@@ -43,7 +43,9 @@ jobs:
       id: srv_status
       run: |
         echo "srv_status=$(systemctl is-active $SRV)" >> $GITHUB_OUTPUT
-        echo ${{steps.srv_status.outputs.srv_status}}
+        
+    - name: print status
+      run: echo ${{steps.srv_status.outputs.srv_status}}
         
     - name: is SRV active
       if: steps.srv_status.outputs.srv_status != 'inactive'
@@ -83,8 +85,10 @@ jobs:
       id: srv_status
       run: |
         echo "srv_status=$(systemctl is-active $SRV)" >> $GITHUB_OUTPUT
-        echo ${{steps.srv_status.outputs.srv_status}}
-        
+
+    - name: print status
+      run: echo ${{steps.srv_status.outputs.srv_status}}
+
     - name: is SRV active
       if: steps.srv_status.outputs.srv_status != 'active'
       run: exit 1
