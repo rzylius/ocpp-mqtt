@@ -43,9 +43,9 @@ jobs:
       id: srv-status
       run: |
         echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
-        systemctl is-active $SRV
-        echo "${{steps.srv-status.outputs.srv-status}}"
-        echo ${{steps.srv-status.outputs.srv-status}}
+    - run: systemctl is-active $SRV
+    - run: echo "${{steps.srv-status.outputs.srv-status}}"
+    - run: echo ${{steps.srv-status.outputs.srv-status}}
 
                 
     - name: is service inactive
