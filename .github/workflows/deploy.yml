@@ -39,17 +39,19 @@ jobs:
     - name: Stop service
       run: systemctl stop $SRV 
   
-    - name: $SRV status
-      id: srv-status
+    - name: SRV status
+      id: srv_status
       run: |
-        echo "srv-status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
+        echo "srv_status=systemctl is-active $SRV" >> $GITHUB_OUTPUT
+    
     - run: systemctl is-active $SRV
-    - run: echo "${{steps.srv-status.outputs.srv-status}}"
-    - run: echo ${{steps.srv-status.outputs.srv-status}}
+    - run: echo "${{steps.srv_status.outputs.srv_status}}"
+    - run: echo ${{steps.srv_status.outputs.srv_status}}
+    - run: ${{steps.srv_status.outputs.srv_status}}
 
                 
     - name: is service inactive
-      if: systemctl is-active $SRV == 'active'
+      if: steps.srv_status.outputs.srv_status == 'active'
       run: exit 1
 
   prepare_poetry:
