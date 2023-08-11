@@ -49,7 +49,7 @@ jobs:
 
                 
     - name: is service inactive
-      if: steps.srv-status.outputs.srv-status == 'active'
+      if: systemctl is-active $SRV == 'active'
       run: exit 1
 
   prepare_poetry:
