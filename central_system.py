@@ -91,7 +91,7 @@ class ChargePoint(cp):
         )
 
     @on(Action.MeterValues)
-    def on_neter_values(self, **kwargs):
+    def on_meter_values(self, **kwargs):
         print('--- Stopped transaction in CP')
         for k,v in kwargs.items():
             print(k, v)
