@@ -46,7 +46,7 @@ jobs:
     needs: stop_service
     runs-on: [self-hosted]
     steps:
-    - name: CD to $DST/ocpp-server
+    - name: CD to $DST
       run: cd $DST
     - name: Install poetry
       uses: abatilo/actions-poetry@v2
