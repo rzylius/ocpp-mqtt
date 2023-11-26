@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DST: /var/lib/openhab/ocpp-server
+  DST: /opt/ocpp
   FILE: central_system.py
   SRV: ocpp
 
@@ -17,17 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Check file existence
-      id: check_files
-      uses: andstor/file-existence-action@v1
-      with:
-        files: "$DST/$FILE"
-
-    - name: File exists
-      if: steps.check_files.outputs.files_exists == 'true'
-      run: mv $DST $DST/$FILE1
-    
     - run: cp * $DST
     - run: chown openhab:openhab $DST/*
 
@@ -57,7 +46,7 @@ jobs:
     needs: stop_service
     runs-on: [self-hosted]
     steps:
-    - name: CD to ocpp-server
+    - name: CD to $DST
       run: cd $DST
     - name: Install poetry
       uses: abatilo/actions-poetry@v2
@@ -85,7 +74,6 @@ jobs:
       id: srv_status
       run: |
         echo "srv_status=$(systemctl is-active $SRV)" >> $GITHUB_OUTPUT
-
     - name: print status
       run: echo ${{steps.srv_status.outputs.srv_status}}
 
