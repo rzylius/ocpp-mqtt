@@ -35,7 +35,11 @@ load_dotenv(verbose=True)
 MQTT_USERNAME=os.getenv('MQTT_USERNAME')
 MQTT_PASSWORD=os.getenv('MQTT_PASSWORD')
 LISTEN_ADDR=os.getenv('LISTEN_ADDR') # 0.0.0.0 for localhost
-TAG_ID=os.getenv('TAG_ID')
+
+# specify the tag_ID which is authorized in the charge station. 
+# Remote server has to send to CP authorised ID in order to start charging
+TAG_ID=os.getenv('TAG_ID') 
+
 
 class ChargePoint(cp):
     @on(Action.BootNotification)
@@ -69,8 +73,7 @@ class ChargePoint(cp):
 
     @on(Action.Authorize)
     def on_authorize(self, id_tag: str):
-        print("--- Got Authorization")
-        """TODO: ! padaryti autentifikacijos patikrinima"""
+        """TODO: might make sense to implement authorisation of IDs if CP is publicly accessible"""
         return call_result.AuthorizePayload(
             id_tag_info={'status': AuthorizationStatus.accepted}
         )
