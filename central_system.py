@@ -5,11 +5,13 @@ import asyncio
 import logging
 from datetime import datetime
 from aiomqtt import Client, MqttError
-import json, sys, os, pprint
+import sys, os
 from dotenv import load_dotenv
-from pathlib import Path
 import signal
 
+
+
+# check dependancies
 try:
     import websockets
 except ModuleNotFoundError:
@@ -32,8 +34,8 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv(verbose=True)
 MQTT_USERNAME=os.getenv('MQTT_USERNAME')
 MQTT_PASSWORD=os.getenv('MQTT_PASSWORD')
-LISTEN_ADDR=os.getenv('LISTEN_ADDR')
-
+LISTEN_ADDR=os.getenv('LISTEN_ADDR') # 0.0.0.0 for localhost
+TAG_ID=os.getenv('TAG_ID')
 
 class ChargePoint(cp):
     @on(Action.BootNotification)
@@ -72,12 +74,13 @@ class ChargePoint(cp):
         return call_result.AuthorizePayload(
             id_tag_info={'status': AuthorizationStatus.accepted}
         )
-    
+    # this is home implementation with no authorization needs, 
+    # so I put constant transaction number 112 
     @on(Action.StartTransaction)
     def on_start_transaction(self, connector_id: int, id_tag: str, meter_start: int, timestamp: str, **kwargs):
         print('--- Started transaction in CP')
         return call_result.StartTransactionPayload(
-            transaction_id=112,
+            transaction_id=112,         
             id_tag_info={'status': AuthorizationStatus.accepted}
         )
     
@@ -86,6 +89,7 @@ class ChargePoint(cp):
         print('--- Stopped transaction in CP')
         for k,v in kwargs.items():
             print(k, v)
+        self.unlock_connector() # unlock connector when transaction stopped
         return call_result.StopTransactionPayload(
             id_tag_info={'status': AuthorizationStatus.accepted}
         )
@@ -98,7 +102,6 @@ class ChargePoint(cp):
         return call_result.MeterValuesPayload()
 
 
-
     async def trigger_message(self):
         request = call.TriggerMessagePayload(
             requested_message=MessageTrigger.statusNotification,
@@ -109,12 +112,9 @@ class ChargePoint(cp):
         print("--- TRIGGER:" + str(response))
         
     async def remote_start_transaction(self):
-        print('------ sending remote start')
         request = call.RemoteStartTransactionPayload(
-            #id_tag='1EB8F76E'
-            id_tag='0XBF5B7AF'         
+            id_tag=TAG_ID         
         )
-        print('------ sending remote start')
         response = await self.call(request)
         if response.status == RemoteStartStopStatus.accepted:
             print("------- Transaction Started!!!")
@@ -123,7 +123,6 @@ class ChargePoint(cp):
         request = call.RemoteStopTransactionPayload(
             transaction_id=112
         )
-        print('sending remote stop')
         response = await self.call(request)
         if response.status == RemoteStartStopStatus.accepted:
             print("Stopping transaction")
@@ -148,18 +147,14 @@ class ChargePoint(cp):
             }
         ))
 
-    async def unlock_connector(self):
-        request = call.UnlockConnectorPayload(connector_id=1)
-        response = await self.call(request)
-        print("Connector unlock:" + response.status)
-        await self.client.publish("/ocpp/connector", payload=response.status)
-
+    # request to change CP configuration
     async def change_configuration(self, key:str, value:str):
         request = call.ChangeConfigurationPayload(key=key, value=value)
         response = await self.call(request)
         print("set configuration: key- {}, value- {}, status- {}".format(key, value, response.status))
         #await self.client.publish("/ocpp/configuration", payload=str(response.status)
 
+    # reda CP configuration
     async def get_configuration(self):
         request = call.GetConfigurationPayload()
         response = await self.call(request)
@@ -168,7 +163,7 @@ class ChargePoint(cp):
         for setting in response.configuration_key:
             print(f"{setting['key']}: {setting['value']}")
 
-    
+    # MQTT implementation
     async def mqtt_listen(self):
         print("start mqtt")
         async with Client(hostname="10.0.20.240",port=1883,username=MQTT_USERNAME,password=MQTT_PASSWORD) as self.client:
