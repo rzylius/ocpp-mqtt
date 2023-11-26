@@ -18,6 +18,3 @@ jobs:
     steps:
     - run: cp * $DST
     - run: chown openhab:openhab $DST/*
-
-      run: exit 1
-        
