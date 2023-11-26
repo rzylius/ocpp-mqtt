@@ -16,5 +16,6 @@ jobs:
     runs-on: [self-hosted]
 
     steps:
+    - uses: actions/checkout@v3
     - run: cp * $DST
     - run: chown openhab:openhab $DST/*
