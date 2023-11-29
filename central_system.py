@@ -92,7 +92,6 @@ class ChargePoint(cp):
         print('--- Stopped transaction in CP')
         for k,v in kwargs.items():
             print(k, v)
-        self.unlock_connector() # unlock connector when transaction stopped
         return call_result.StopTransactionPayload(
             id_tag_info={'status': AuthorizationStatus.accepted}
         )
@@ -171,7 +170,7 @@ class ChargePoint(cp):
         print("start mqtt")
         async with Client(hostname="10.0.20.240",port=1883,username=MQTT_USERNAME,password=MQTT_PASSWORD) as self.client:
             async with self.client.messages() as messages:
-                await self.client.subscribe("/ocpp/cmd/#")
+                await self.client.subscribe("/ocpp/cmd/#") # this is the channel where to send command messages
                 async for message in messages:
                     msg = str(message.payload.decode("utf-8")).split()
                     print("MQTT msg: ")
@@ -184,8 +183,6 @@ class ChargePoint(cp):
                         await self.trigger_message()
                     if msg[0] == "profile":
                         await self.set_charging_profile(int(msg[1]))
-                    if msg[0] == "unlock":
-                        await self.unlock_connector()
                     if msg[0] == "exit":
                         sys.exit(0)
                     if msg[0] == "configuration":
@@ -194,6 +191,7 @@ class ChargePoint(cp):
                         await self.change_configuration(msg[1], msg[2])
                     if msg[0] == "meter_values":
                         await self.meter_values()
+
 
 
 async def on_connect(websocket, path):
