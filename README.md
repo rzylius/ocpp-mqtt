@@ -18,6 +18,11 @@ For automation needs I implemented these commands:
 - change_configuration (set local CP configuration item)
 - exit (stop bridge)
 
+Note: to provide secrets, you need to place .env file in the directory: 
+MQTT_USERNAME=xxx 
+MQTT_PASSWORD=xxx 
+LISTEN_ADDR=0.0.0.0 
+TAG_ID=xxx
 
 Note: check specific dependencies if implemented without poetry, as latest versions of some packages break functionalities.
 
